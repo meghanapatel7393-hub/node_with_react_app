@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <ul>
+      <li><h1>1️⃣ What is MongoDB?</h1></li>
+      <ul>
+        <li>
+          <pre>
+MongoDB is a NoSQL database
+
+Stores data as documents (JSON-like objects)
+
+Example document:
+
+{
+  "name": "Bhavesh",
+  "age": 22,
+  "email": "bhavesh@gmail.com"
+}
+
+
+
+👉 MongoDB is the database itself
+      </pre
+          >
+        </li>
+      </ul>
+      <li><h1>2️⃣ What is Mongoose?</h1></li>
+      <ul>
+        <li>
+          <pre>
+Mongoose is a library (ODM) for MongoDB
+
+Helps Node.js talk to MongoDB easily
+
+Provides:
+
+Schema (structure)
+
+Validation
+
+Models
+
+Cleaner code
+
+👉 Mongoose is NOT a database, it’s a tool to use MongoDB better
+
+        </pre
+          >
+        </li>
+      </ul>
+      <li><h1>3️⃣ Small Project Example (Node + MongoDB + Mongoose)</h1></li>
+      <ul>
+        <li>
+          <pre>
+📁 Folder structure
+project/
+ ├── app.js
+ ├── models/User.js
+ ├── package.json
+
+
+ 4️⃣ Install required packages
+
+ npm init -y
+npm install express mongoose
+
+
+5️⃣ Connect MongoDB (app.js)
+
+const express = require("express");
+const mongoose = require("mongoose");
+
+const app = express();
+app.use(express.json());
+
+// MongoDB connection
+mongoose.connect("mongodb://127.0.0.1:27017/mydb")
+  .then(() => console.log("MongoDB Connected"))
+  .catch(err => console.log(err));
+
+app.listen(3000, () => {
+  console.log("Server running on port 3000");
+});
+
+
+6️⃣ Create a Mongoose Schema & Model (models/User.js)
+const mongoose = require("mongoose");
+
+// Schema (structure)
+const userSchema = new mongoose.Schema({
+  name: String,
+  age: Number,
+  email: String
+});
+
+// Model
+module.exports = mongoose.model("User", userSchema);
+
+
+
+7️⃣ Insert Data (Create User)
+Add this inside app.js
+
+const User = require("./models/User");
+
+app.post("/add-user", async (req, res) => {
+  const user = new User({
+    name: "Bhavesh",
+    age: 22,
+    email: "bhavesh@gmail.com"
+  });
+
+  await user.save();
+  res.send("User saved in database");
+});
+
+
+📌 Open browser or Postman:
+POST http://localhost:3000/add-user
+
+
+✅ Data saved in MongoDB
+
+8️⃣ Get Data from Database
+
+app.get("/users", async (req, res) => {
+  const users = await User.find();
+  res.json(users);
+});
+
+
+GET http://localhost:3000/users
+
+
+
+
+      </pre
+          >
+        </li>
+      </ul>
+      <li><h1>9️⃣ MongoDB WITHOUT Mongoose (Raw MongoDB Example)</h1></li>
+      <ul>
+        <li>
+          <pre>
+const { MongoClient } = require("mongodb");
+
+const client = new MongoClient("mongodb://127.0.0.1:27017");
+
+async function run() {
+  await client.connect();
+  const db = client.db("mydb");
+  const users = db.collection("users");
+
+  await users.insertOne({ name: "Bhavesh", age: 22 });
+  console.log("User inserted");
+}
+
+run();
+
+👎 This works, but code is longer and harder
+
+      </pre
+          >
+        </li>
+      </ul>
+
+      <li><h1>🔟 Difference Between MongoDB & Mongoose</h1></li>
+      <ul>
+        <li>
+          <pre>
+| Feature           | MongoDB  | Mongoose       |
+| ----------------- | -------- | -------------- |
+| What it is        | Database | Library (ODM)  |
+| Schema            | ❌ No     | ✅ Yes          |
+| Validation        | ❌ No     | ✅ Yes          |
+| Code              | Complex  | Clean & simple |
+| Beginner friendly | ❌ Hard   | ✅ Easy         |
+
+
+      </pre
+          >
+        </li>
+      </ul>
+      <li><h1>1️⃣1️⃣ Which One Is Better?</h1></li>
+      <ul>
+        <li>
+          <pre>
+✅ Mongoose is better (for Node.js developers)
+Why?
+
+✔ Simple syntax
+✔ Schema & validation
+✔ Clean code
+✔ Easy CRUD operations
+✔ Industry standard
+
+👉 MongoDB + Mongoose together is the best choice
+
+
+1️⃣2️⃣ When NOT to use Mongoose?
+
+Very small scripts
+
+Direct MongoDB control needed
+
+Performance-critical low-level operations
+
+🔥 Final Recommendation (For You)
+
+Since you are learning Node.js from scratch:
+
+✅ Use MongoDB with Mongoose
+
+        </pre
+          >
+        </li>
+      </ul>
+    </ul>
+  </body>
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <ul>
+      <li>
+        By “dynamic template” (in Node + MongoDB + Mongoose), you usually mean:
+      </li>
+      <li>
+        <h3>
+          HTML pages that change dynamically based on database data (using
+          template engines like EJS, Pug, or Handlebars)
+        </h3>
+      </li>
+      <li>
+        I’ll explain with a very small, practical example using EJS (most
+        beginner-friendly).
+      </li>
+      <li><h1>1️⃣ What is a Dynamic Template?</h1></li>
+      <ul>
+        <li>
+          <pre>
+A dynamic template:
+
+Is an HTML page
+
+Gets data from Node.js
+
+Displays database values dynamically
+
+📌 Example:
+
+Users stored in MongoDB
+
+Page shows user list automatically
+
+
+2️⃣ We’ll Use:
+
+Node.js
+
+Express
+
+MongoDB + Mongoose
+
+EJS (template engine)
+
+      </pre
+          >
+        </li>
+        <li><h1>3️⃣ Install Required Packages</h1></li>
+        <li><h3>npm install express mongoose ejs</h3></li>
+      </ul>
+      <li>
+        <pre>
+4️⃣ Folder Structure (IMPORTANT)
+
+project/
+ ├── app.js
+ ├── models/
+ │    └── User.js
+ ├── views/
+ │    ├── users.ejs
+ │    └── addUser.ejs
+ ├── package.json
+
+
+      </pre
+        >
+      </li>
+      <li><h1>5️⃣ Setup Express + EJS (app.js)</h1></li>
+      <ul>
+        <li>
+          <pre>
+const express = require("express");
+const mongoose = require("mongoose");
+
+const app = express();
+app.use(express.urlencoded({ extended: true }));
+
+// set template engine
+app.set("view engine", "ejs");
+
+// MongoDB connection
+mongoose.connect("mongodb://127.0.0.1:27017/mydb")
+  .then(() => console.log("MongoDB Connected"))
+  .catch(err => console.log(err));
+
+const User = require("./models/User");
+
+app.listen(3000, () => {
+  console.log("Server running on port 3000");
+});
+
+
+      </pre
+          >
+        </li>
+        <li>
+          <pre>
+6️⃣ Mongoose Model (models/User.js)
+
+const mongoose = require("mongoose");
+
+const userSchema = new mongoose.Schema({
+  name: String,
+  age: Number
+});
+
+module.exports = mongoose.model("User", userSchema);
+
+
+7️⃣ Route → Show Dynamic Page (READ data)
+
+app.get("/users", async (req, res) => {
+  const users = await User.find();
+  res.render("users", { users });
+});
+
+
+
+📌 users is sent to users.ejs
+
+8️⃣ Dynamic Template (views/users.ejs)
+
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;Users List&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;h2&gt;Users&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;% users.forEach(user =&gt; { %&gt;
+    &lt;li&gt;
+      Name: &lt;%= user.name %&gt; |
+      Age: &lt;%= user.age %&gt;
+    &lt;/li&gt;
+  &lt;% }) %&gt;
+&lt;/ul&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+
+🔥 This is dynamic
+If DB data changes → page updates automatically
+
+
+9️⃣ Add Data Form (Dynamic Insert)
+Route
+app.get("/add-user", (req, res) => {
+  res.render("addUser");
+});
+
+app.post("/add-user", async (req, res) => {
+  await User.create(req.body);
+  res.redirect("/users");
+});
+
+
+🔟 Add User Template (views/addUser.ejs)
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;Add User&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;h2&gt;Add User&lt;/h2&gt;
+
+&lt;form method="POST" action="/add-user"&gt;
+  &lt;input type="text" name="name" placeholder="Name" required /&gt;
+  &lt;input type="number" name="age" placeholder="Age" required /&gt;
+  &lt;button type="submit"&gt;Save&lt;/button&gt;
+&lt;/form&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+
+
+🔥 How Dynamic Template Works (Simple Flow)
+Browser → Request → Node.js
+        → MongoDB fetch
+        → EJS injects data
+        → HTML sent to browser
+
+        1️⃣1️⃣ EJS Syntax (Quick Cheat Sheet)
+
+        | Purpose    | Syntax                |
+| ---------- | --------------------- |
+| Print data | `&lt;%= name %&gt;`         |
+| JS logic   | `&lt;% if() { } %&gt;`      |
+| Loop       | `&lt;% arr.forEach() %&gt;` |
+
+
+1️⃣2️⃣ Why Use Dynamic Templates?
+✔ No page reload logic in frontend
+✔ Direct DB → UI
+✔ Simple for beginners
+✔ Perfect for admin panels, dashboards
+
+✅ When to Use Dynamic Templates
+Admin panels
+
+Simple dashboards
+
+Server-rendered apps
+
+❌ When NOT
+
+Heavy frontend apps → use React
+🔥 For You (Beginner Recommendation)
+
+Since you are learning Node + MongoDB:
+
+✅ First learn EJS dynamic templates
+👉 Then move to React
+
+        </pre
+          >
+        </li>
+      </ul>
+    </ul>
+  </body>
+</html>

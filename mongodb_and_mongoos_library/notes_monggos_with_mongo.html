@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <ul>
+      <li><h1>🔥 LET’S START – PHASE 0️⃣</h1></li>
+      <ul>
+        <li>
+          <pre>
+<h3>1️⃣ What is a Database? (Very Simple)</h3>
+A database is a place to store data permanently.
+
+📌 Example:
+
+Users
+
+Products
+
+Orders
+
+Without database → data is lost when server restarts ❌
+
+<h3>
+  2️⃣ What is NoSQL?
+</h3>
+NoSQL means:
+
+No fixed table structure
+
+Flexible data
+
+Stores data as documents
+
+📄 Example document:
+
+{
+  "name": "Bhavesh",
+  "age": 22,
+  "skills": ["JS", "Node"]
+}
+
+
+<h3>3️⃣ What is MongoDB?</h3>
+MongoDB is a NoSQL database
+
+Stores data in:
+
+Database
+
+Collection
+
+Document
+
+📦 Structure:
+
+Database
+ └── Collection
+      └── Document
+
+<h3>4️⃣ MongoDB vs SQL (Simple Table)</h3>
+| SQL          | MongoDB         |
+| ------------ | --------------- |
+| Tables       | Collections     |
+| Rows         | Documents       |
+| Columns      | Fields          |
+| Fixed schema | Flexible schema |
+
+
+<h3>5️⃣ What is Mongoose?</h3>
+Mongoose is an ODM (Object Data Modeling)
+
+Helps Node.js talk to MongoDB
+
+Adds:
+✔ Schema
+✔ Validation
+✔ Clean syntax
+
+📌 MongoDB alone = raw
+📌 MongoDB + Mongoose = professional
+
+
+
+          </pre>
+        </li>
+      </ul>
+      <li><h1>🚀 PHASE 1️⃣ – SETUP</h1></li>
+      <ul>
+        <li>
+          <pre>
+<h3>6️⃣ Install MongoDB</h3>
+Option A (Recommended)
+
+Install MongoDB Community Server
+
+Install MongoDB Compass
+
+👉 I’ll assume local MongoDB
+
+<h3>7️⃣ Create Project</h3>
+mkdir mongo-course
+cd mongo-course
+npm init -y
+npm install express mongoose
+
+
+<h3>8️⃣ Basic Server (app.js)</h3>
+const express = require("express");
+const mongoose = require("mongoose");
+
+const app = express();
+app.use(express.json());
+
+mongoose.connect("mongodb://127.0.0.1:27017/mongoCourse")
+  .then(() => console.log("MongoDB Connected"))
+  .catch(err => console.log(err));
+
+app.listen(3000, () => {
+  console.log("Server running on port 3000");
+});
+
+
+✅ If you see MongoDB Connected → perfect
+
+
+
+
+        </pre>
+        </li>
+      </ul>
+      <li><h1>🔥 PHASE 2️⃣ – CORE MONGOOSE (VERY IMPORTANT)</h1></li>
+      <ul>
+        <li>
+          <pre>
+<h3>9️⃣ Schema (Blueprint)</h3>
+const mongoose = require("mongoose");
+
+const userSchema = new mongoose.Schema({
+  name: String,
+  age: Number,
+  email: String
+});
+
+
+👉 Schema defines structure
+
+<h3>🔟 Model (Controller)</h3>
+const User = mongoose.model("User", userSchema);
+
+👉 Model is used to CRUD data
+
+<h3>1️⃣1️⃣ Create (INSERT)</h3>
+app.post("/add-user", async (req, res) => {
+  const user = new User({
+    name: "Bhavesh",
+    age: 22,
+    email: "b@gmail.com"
+  });
+
+  await user.save();
+  res.send("User saved");
+});
+
+
+<h3>1️⃣2️⃣ Read (GET)</h3>
+app.get("/users", async (req, res) => {
+  const users = await User.find();
+  res.json(users);
+});
+
+
+<h3>1️⃣3️⃣ Update</h3>
+app.put("/user/:id", async (req, res) => {
+  await User.findByIdAndUpdate(req.params.id, { age: 25 });
+  res.send("Updated");
+});
+
+
+<h3>1️⃣4️⃣ Delete</h3>
+app.delete("/user/:id", async (req, res) => {
+  await User.findByIdAndDelete(req.params.id);
+  res.send("Deleted");
+});
+
+
+
+
+        </pre>
+        </li>
+      </ul>
+      <li>
+        <h1>🔥 PHASE 3️⃣ – MONGOOSE SCHEMA & VALIDATION (VERY IMPORTANT)</h1>
+      </li>
+      <ul>
+        <li>
+          <pre>
+This phase is mandatory for interviews & real projects.
+<h3>1️⃣ Why Validation is IMPORTANT?</h3>
+
+Without validation:
+
+Empty data can be saved ❌
+
+Wrong data type can be saved ❌
+
+Duplicate email allowed ❌
+
+With validation:
+
+Clean data ✅
+
+Less bugs ✅
+
+Professional code ✅
+
+<h2>🧠 SCHEMA IN DEPTH</h2>
+<h3>2️⃣ Basic Schema with Types</h3>
+const mongoose = require("mongoose");
+
+const userSchema = new mongoose.Schema({
+  name: String,
+  age: Number,
+  email: String
+});
+
+
+<h3>3️⃣ Required Field</h3>
+const userSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true
+  },
+  age: Number
+});
+
+
+❌ Without name → error
+✅ With name → saved
+
+<h3>4️⃣ Default Value</h3>
+isActive: {
+  type: Boolean,
+  default: true
+}
+
+
+If not provided → MongoDB sets it automatically
+
+<h3>5️⃣ Min & Max (Number)</h3>
+age: {
+  type: Number,
+  min: 18,
+  max: 60
+}
+
+
+<h3>6️⃣ String Validation</h3>
+name: {
+  type: String,
+  minlength: 3,
+  maxlength: 20
+}
+
+
+<h3>7️⃣ Unique Field (VERY COMMON)</h3>
+email: {
+  type: String,
+  required: true,
+  unique: true
+}
+
+⚠️ unique creates index, not validation
+But works fine for beginners
+
+<h3>8️⃣ Full Professional Schema</h3>
+const userSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+    minlength: 3
+  },
+  age: {
+    type: Number,
+    min: 18,
+    max: 60
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  isActive: {
+    type: Boolean,
+    default: true
+  }
+});
+
+
+
+
+
+      </pre>
+        </li>
+      </ul>
+      <li><h1>🔥 ERROR HANDLING (IMPORTANT)</h1></li>
+      <ul>
+        <li>
+          <pre>
+<h3>9️⃣ Try–Catch (MUST)</h3>
+app.post("/add-user", async (req, res) => {
+  try {
+    const user = await User.create(req.body);
+    res.json(user);
+  } catch (error) {
+    res.status(400).json({
+      message: error.message
+    });
+  }
+});
+
+<h3>🔍 Example Errors</h3>
+| Problem         | Error                   |
+| --------------- | ----------------------- |
+| Missing name    | Path `name` is required |
+| Duplicate email | E11000 duplicate key    |
+| Age < 18        | Validator failed        |
+
+
+      </pre>
+        </li>
+      </ul>
+      <li><h1>🔥 PHASE 4️⃣ – MONGOOSE QUERIES</h1></li>
+      <ul>
+        <li>
+          <pre>
+Assume this User Schema:
+{
+  name: "Bhavesh",
+  age: 22,
+  email: "b@gmail.com",
+  isActive: true
+}
+
+<h3>1️⃣ find() – Get ALL matching documents</h3>
+const users = await User.find();
+📌 Returns array
+
+<h3>2️⃣ findOne() – Get ONE document</h3>
+const user = await User.findOne({ email: "b@gmail.com" });
+
+📌 Returns single object
+
+<h3>3️⃣ findById()</h3>
+const user = await User.findById("64f8...");
+
+📌 Best when using _id
+
+<h2>🔍 FILTERING DATA</h2>
+<h3>4️⃣ Simple Filter</h3>
+User.find({ age: 22 });
+
+<h3>5️⃣ Comparison Operators</h3>
+| Operator | Meaning      |
+| -------- | ------------ |
+| `$gt`    | greater than |
+| `$lt`    | less than    |
+| `$gte`   | &gt;=           |
+| `$lte`   | &lt;=           |
+
+
+User.find({ age: { $gte: 18, $lte: 25 } });
+
+
+<h3>6️⃣ Logical Operators</h3>
+<h4>AND (default)</h4>
+User.find({ age: 22, isActive: true });
+
+<h4>OR</h4>
+User.find({
+  $or: [
+    { age: 22 },
+    { isActive: false }
+  ]
+});
+
+<h2>🔃 SORTING</h2>
+<h3>7️⃣ Sort Data</h3>
+User.find().sort({ age: 1 });   // ascending
+User.find().sort({ age: -1 });  // descending
+
+
+<h2>📄 LIMIT & PAGINATION (VERY IMPORTANT)</h2>
+<h3>8️⃣ Limit</h3>
+User.find().limit(5);
+
+
+<h3>9️⃣ Pagination (REAL WORLD)</h3>
+const page = 2;
+const limit = 3;
+
+User.find()
+  .skip((page - 1) * limit)
+  .limit(limit);
+
+
+  <h2>🔍 SEARCH (TEXT SEARCH)</h2>
+  <h3>🔟 Regex Search (Beginner Friendly)</h3>
+  User.find({
+  name: { $regex: "bha", $options: "i" }
+});
+
+📌 Finds:
+
+Bhavesh
+
+bhavin
+
+Abhay
+
+<h2>🎯 SELECT (SHOW ONLY REQUIRED FIELDS)</h2>
+User.find().select("name email");
+❌ hides other fields
+
+<h2>🧪 COMPLETE API EXAMPLE</h2>
+app.get("/users", async (req, res) => {
+  const users = await User.find({ isActive: true })
+    .sort({ age: -1 })
+    .limit(5)
+    .select("name age");
+
+  res.json(users);
+});
+
+
+
+        </pre>
+        </li>
+      </ul>
+      <li><h1>🔥 PHASE 5️⃣ – RELATIONSHIPS & populate()</h1></li>
+      <ul>
+        <li>
+          <pre>
+MongoDB is NoSQL, but we still create relationships using ObjectId references.
+
+<h2>🧠 Types of Relationships</h2>
+1. One-to-One
+
+2. One-to-Many
+
+3. Many-to-Many
+
+We’ll cover all.
+
+
+<h3>1️⃣ ONE-TO-ONE</h3>
+Example:
+            One User → One Profile
+
+<h3>🧱 Profile Schema</h3>
+const profileSchema = new mongoose.Schema({
+  bio: String,
+  address: String
+});
+
+module.exports = mongoose.model("Profile", profileSchema);
+
+
+<h3>🧱 User Schema (Reference)</h3>
+const userSchema = new mongoose.Schema({
+  name: String,
+  profile: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Profile"
+  }
+});
+
+
+<h2>📥 Save Data</h2>
+const profile = await Profile.create({
+  bio: "Node Developer",
+  address: "India"
+});
+
+const user = await User.create({
+  name: "Bhavesh",
+  profile: profile._id
+});
+
+
+<h3>📤 Fetch with populate()</h3>
+User.find().populate("profile");
+
+✅ Profile data included automatically
+
+<h2>2️⃣ ONE-TO-MANY (MOST COMMON)</h2>
+Example:
+One User → Many Posts
+
+<h3>🧱 Post Schema</h3>
+const postSchema = new mongoose.Schema({
+  title: String,
+  content: String,
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User"
+  }
+});
+
+
+<h3>📥 Save Post</h3>
+await Post.create({
+  title: "MongoDB Basics",
+  content: "Learning Mongoose",
+  user: userId
+});
+
+
+<h3>📤 Fetch Posts with User</h3>
+Post.find().populate("user");
+
+<h2>3️⃣ MANY-TO-MANY</h2>
+Example:
+Students ↔ Courses
+
+<h3>🧱 Student Schema</h3>
+courses: [{
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "Course"
+}]
+
+<h3>🧱 Course Schema</h3>
+students: [{
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "Student"
+}]
+
+<h3>📤 Populate</h3>
+Student.find().populate("courses");
+
+<h3>🔍 populate() EXPLAINED SIMPLY</h3>
+populate("user")
+
+👉 Takes ObjectId
+👉 Finds matching document
+👉 Replaces ID with full object
+
+<h2>⚠️ COMMON MISTAKES</h2>
+❌ Forgetting ref
+❌ Wrong model name
+❌ Using string instead of ObjectId
+
+
+
+
+          
+          </pre>
+        </li>
+      </ul>
+      <li><h1>🔥 PHASE 6️⃣ – REAL WORLD MONGOOSE FEATURES</h1></li>
+      <ul>
+        <li>
+          <pre>
+<h2>1️⃣ Timestamps (CreatedAt & UpdatedAt)</h2>
+Automatically track when data is created/updated.
+<h3>✅ Add to Schema</h3>
+const userSchema = new mongoose.Schema(
+  {
+    name: String,
+    email: String
+  },
+  { timestamps: true }
+);
+
+<h3>📌 MongoDB will add:</h3>
+createdAt
+updatedAt
+
+
+<h3>2️⃣ Indexes (Performance Boost)</h3>
+Indexes make search faster.
+
+<h4>Unique Email Index</h4>
+email: {
+  type: String,
+  unique: true
+}
+
+<h3>3️⃣ Hide Sensitive Data (IMPORTANT)</h3>
+❌ Problem
+
+Password shows in API response.
+
+✅ Solution
+password: {
+  type: String,
+  select: false
+}
+
+Now password won’t show in find().
+
+<h3>4️⃣ Password Hashing (VERY IMPORTANT 🔥)</h3>
+Install bcrypt
+npm install bcryptjs
+
+<h2>User Schema</h2>
+const bcrypt = require("bcryptjs");
+
+const userSchema = new mongoose.Schema({
+  name: String,
+  email: String,
+  password: String
+});
+
+
+<h3>Hash Before Save (Pre Hook)</h3>
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+
+  this.password = await bcrypt.hash(this.password, 10);
+  next();
+});
+
+<h3>Compare Password</h3>
+userSchema.methods.comparePassword = function (password) {
+  return bcrypt.compare(password, this.password);
+};
+
+<h2>5️⃣ REGISTER API (Real Example)</h2>
+app.post("/register", async (req, res) => {
+  try {
+    const user = await User.create(req.body);
+    res.json({ message: "User registered" });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+<h2>6️⃣ LOGIN API (VERY IMPORTANT 🔥)</h2>
+app.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  const user = await User.findOne({ email }).select("+password");
+
+  if (!user) {
+    return res.status(400).json({ message: "User not found" });
+  }
+
+  const isMatch = await user.comparePassword(password);
+
+  if (!isMatch) {
+    return res.status(400).json({ message: "Wrong password" });
+  }
+
+  res.json({ message: "Login successful" });
+});
+
+
+<h2>7️⃣ Environment Variables (SECURITY)</h2>
+<h3>Install dotenv</h3>
+npm install dotenv
+
+<h4>.env</h4>
+MONGO_URI=mongodb://127.0.0.1:27017/appdb
+
+<h4>Use it</h4>
+require("dotenv").config();
+
+mongoose.connect(process.env.MONGO_URI);
+
+
+<h3>8️⃣ Professional Folder Structure</h3>
+src/
+ ├── models/
+ ├── routes/
+ ├── controllers/
+ ├── config/
+ ├── app.js
+
+
+
+
+
+        
+      </pre>
+        </li>
+      </ul>
+      <li><h1>🔥 PHASE 7️⃣ – ERROR HANDLING & BEST PRACTICES</h1></li>
+      <ul>
+        <li>
+          <pre>
+<h2>1️⃣ Why Error Handling Matters?</h2>
+Without proper error handling:
+
+App crashes ❌
+
+Hard to debug ❌
+
+Bad user experience ❌
+
+With proper handling:
+
+App never crashes ✅
+
+Clean responses ✅
+
+Easy debugging ✅
+
+<h2>2️⃣ Basic try–catch (Already seen)</h2>
+app.get("/users", async (req, res) => {
+  try {
+    const users = await User.find();
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+⚠️ Works but repetitive.
+
+<h2>3️⃣ Central Error Handler (PRO WAY)</h2>
+<h3>📁 middleware/errorHandler.js</h3>
+module.exports = (err, req, res, next) => {
+  res.status(err.statusCode || 500).json({
+    success: false,
+    message: err.message || "Server Error"
+  });
+};
+
+
+<h2>Use in app.js</h2>
+const errorHandler = require("./middleware/errorHandler");
+
+// routes above
+app.use(errorHandler);
+
+
+<h2>4️⃣ Custom Error Class (IMPORTANT)</h2>
+<h3>📁 utils/AppError.js</h3>
+class AppError extends Error {
+  constructor(message, statusCode) {
+    super(message);
+    this.statusCode = statusCode;
+  }
+}
+
+module.exports = AppError;
+
+<h2>Usage Example</h2>
+if (!user) {
+  return next(new AppError("User not found", 404));
+}
+
+
+<h2>5️⃣ Async Error Wrapper (NO try-catch everywhere)</h2>
+<h3>📁 utils/catchAsync.js</h3>
+module.exports = fn => (req, res, next) => {
+  fn(req, res, next).catch(next);
+};
+
+
+<h3>Use It</h3>
+app.get("/users", catchAsync(async (req, res) => {
+  const users = await User.find();
+  res.json(users);
+}));
+
+<h2>6️⃣ Mongoose Error Handling</h2>
+<h3>Duplicate Key Error</h3>
+
+if (err.code === 11000) {
+  err.message = "Duplicate field value";
+}
+
+
+<h2>7️⃣ Validation Error</h2>
+if (err.name === "ValidationError") {
+  err.message = Object.values(err.errors)
+    .map(e => e.message)
+    .join(", ");
+}
+
+
+<h2>8️⃣ Best Practices (VERY IMPORTANT)</h2>
+✅ DO
+
+✔ Use async/await
+✔ Use environment variables
+✔ Central error handling
+✔ Schema validation
+✔ Proper folder structure
+
+❌ DON'T
+
+❌ Write logic in routes
+❌ Expose passwords
+❌ Hardcode DB URL
+❌ Ignore errors
+
+<h2>9️⃣ Production-Ready Folder Structure</h2>
+src/
+ ├── controllers/
+ ├── models/
+ ├── routes/
+ ├── middleware/
+ ├── utils/
+ ├── config/
+ └── app.js
+
+
+ <h2>🔟 Interview Questions (YOU MUST KNOW)</h2>
+
+ Q1: What is Mongoose?
+
+ODM for MongoDB providing schema & validation.
+
+Q2: Difference between find & findOne?
+
+find returns array, findOne returns object.
+
+Q3: What is populate?
+
+Used to join referenced documents.
+
+Q4: Why use indexes?
+
+Faster query performance.
+
+
+        </pre>
+        </li>
+      </ul>
+    </ul>
+  </body>
+</html>
